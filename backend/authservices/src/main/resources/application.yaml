@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: authservices
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authservices
+    username: postgres
+    password: dontwastetime
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        "[format_sql]": true
+        "[use_sql_comments]": true
+logging:
+  level:
+    "[org.springframework.security]": DEBUG
+jwt:
+  secret: DrVkR15ZK60VB4x4XlzwmcXz2YbJ/QKYt+wLzvReOie987escVMqaEqR1GNFLAEmhl+WJdh++cnFihOwXeQbCA==
+  expiration: 3600000
