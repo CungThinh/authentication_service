@@ -3,9 +3,10 @@ package com.cungthinh.authservices.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cungthinh.authservices.dto.LoginResponse;
-import com.cungthinh.authservices.request.LoginRequest;
-import com.cungthinh.authservices.resource.ErrorResource;
+import com.cungthinh.authservices.dto.request.LoginRequest;
+import com.cungthinh.authservices.dto.response.ApiResponse;
+import com.cungthinh.authservices.dto.response.LoginResponse;
+import com.cungthinh.authservices.service.AuthenticationService;
 import com.cungthinh.authservices.service.UserService;
 
 import jakarta.validation.Valid;
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Validated
 @RestController
@@ -23,19 +26,50 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    private AuthenticationService authService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Object result = userService.login(loginRequest);
-
-        if(result instanceof LoginResponse) {
-            return ResponseEntity.ok(result);
-        } else if (result instanceof ErrorResource) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
-        }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra");
+        ApiResponse<Object> response = authService.login(loginRequest);
+        return ResponseEntity.ok(response); 
     }
+
+    // @GetMapping("/logout")
+    // public ResponseEntity<?> logout(@RequestHeader("Authorization") String
+    // authorizationHeader) {
+
+    // if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer
+    // ")) {
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Header bị thiếu
+    // hoặc không hợp lệ");
+    // }
+
+    // String token = authorizationHeader.substring(7);
+    // blackListService.addToBlackList(token);
+
+    // return ResponseEntity.ok("Đăng xuất thành công");
+    // }
+
+    // @GetMapping("/refresh-token")
+    // public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String
+    // authorizationHeader) {
+    // if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer
+    // ")) {
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Header bị thiếu
+    // hoặc không hợp lệ");
+    // }
+
+    // String token = authorizationHeader.substring(7);
+    // Object result = userService.refreshToken(token);
+
+    // if(result instanceof RefreshTokenDTO) {
+    // return ResponseEntity.ok(result);
+    // } else if (result instanceof ErrorResource) {
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+    // }
+
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi
+    // xảy ra");
+    // }
 }
