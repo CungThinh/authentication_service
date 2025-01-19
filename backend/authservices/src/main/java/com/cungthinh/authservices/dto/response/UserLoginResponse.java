@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserLoginResponse {
     private String userId;
     private String email;
-    private Set<String> roles;
+    private Set<RoleResponse> roles;
 }

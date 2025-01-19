@@ -26,5 +26,5 @@ logging:
     "[org.springframework.security]": DEBUG
 jwt:
   secret: 63iPoQhsvC+H6+Oz9WSDp0ePZZllx+7Y/e3Dnz1MEKsvCD43CByhuCg/zQ7sbz9b
-  expiration: 3600000
-  refresh-expiration: 7200000
+  expired-duration: 10 # in seconds
+  refreshable-duration: 6000 # in seconds
