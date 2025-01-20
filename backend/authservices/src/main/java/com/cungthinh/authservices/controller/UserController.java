@@ -2,6 +2,7 @@ package com.cungthinh.authservices.controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +18,8 @@ import com.cungthinh.authservices.service.UserService;
 @RequestMapping("api/v1/users")
 public class UserController {
 
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/add")
     public ResponseEntity<Object> addUser(@Valid @RequestBody UserCreationRequest userCreationRequest) {
