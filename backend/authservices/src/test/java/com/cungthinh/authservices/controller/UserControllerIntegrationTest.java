@@ -55,7 +55,7 @@ public class UserControllerIntegrationTest {
         registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
     }
-
+// 
     @Container
     static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
 
