@@ -35,8 +35,8 @@ public class UserEntity {
     // DOB
     LocalDate dob;
 
-    @Column(columnDefinition = "varchar(255)")
-    String firstName;
+//    @Column(columnDefinition = "varchar(255)")
+//    String firstName;
     //
     //    @Column(columnDefinition = "varchar(255)")
     //    String lastName;
