@@ -32,6 +32,7 @@ public class UserEntity {
     @Column(columnDefinition = "varchar(255)", nullable = false)
     String password;
 
+    // Test again
     LocalDate dob;
 
     // @Column(columnDefinition = "varchar(255)")
