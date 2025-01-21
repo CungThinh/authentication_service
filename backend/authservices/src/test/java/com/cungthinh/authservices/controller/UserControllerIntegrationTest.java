@@ -60,11 +60,13 @@ public class UserControllerIntegrationTest {
     static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
 
     @Test
-    @WithMockUser(username = "test-uuid-123", roles = { "USER" })
+    @WithMockUser(
+            username = "test-uuid-123",
+            roles = {"USER"})
     void getMyInfo_validRequest_success() throws Exception {
         // Now use @WithMockUser with the generated ID
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me")
-                .with(user(savedUser.getId()).roles("USER")))
+                        .with(user(savedUser.getId()).roles("USER")))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

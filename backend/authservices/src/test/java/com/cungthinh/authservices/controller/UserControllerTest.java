@@ -69,8 +69,8 @@ class UserControllerTest {
 
         // WHEN, THEN
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/add")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(content))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(content))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000))
                 .andExpect(MockMvcResultMatchers.jsonPath("data.id").value("cf0600f538b3"));
