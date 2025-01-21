@@ -31,7 +31,7 @@ public class UserEntity {
 
     @Column(columnDefinition = "varchar(255)", nullable = false)
     String password;
-    
+
     LocalDate dob;
 
     // @Column(columnDefinition = "varchar(255)")
