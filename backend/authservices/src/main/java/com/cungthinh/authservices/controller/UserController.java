@@ -1,19 +1,18 @@
 package com.cungthinh.authservices.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
-import com.cungthinh.authservices.dto.UserDTO;
+import com.cungthinh.authservices.dto.UserCreationRequest;
 import com.cungthinh.authservices.entity.user.UserEntity;
 import com.cungthinh.authservices.repository.UserResipotory;
-import com.cungthinh.authservices.resource.SuccessResource;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -24,14 +23,29 @@ public class UserController {
     @Autowired
     private UserResipotory userResipotory;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/me")
     public ResponseEntity<?> me() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userResipotory.findByEmail(username);
-        UserDTO userData = UserDTO.builder().id(user.getId()).email(user.getEmail()).build();
+        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+        String username = loggedInUser.getPrincipal().toString();
+        return ResponseEntity.ok().body(username);
+    }
 
-        SuccessResource response = new SuccessResource("SUCCESS", userData);
+    @PostMapping("/add")
+    public ResponseEntity<?> add(@RequestBody UserCreationRequest userCreationRequest) {
+        UserEntity user = new UserEntity();
+        user.setEmail(userCreationRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
+        userResipotory.save(user);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(201).body("Tạo user thành công");
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> admin() {
+        return ResponseEntity.ok().body("Admin");
     }
 }

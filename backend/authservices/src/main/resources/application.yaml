@@ -15,9 +15,32 @@ spring:
       hibernate:
         "[format_sql]": true
         "[use_sql_comments]": true
+  session:
+    timeout: 15m
+    redis:
+      cleanup-cron: 0 * * * * *
+      flush-mode: on_save
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+        same-site: strict
+        domain: localhost
+        path: /
+        http-only: true
+        secure: false
 logging:
   level:
     "[org.springframework.security]": DEBUG
-jwt:
-  secret: DrVkR15ZK60VB4x4XlzwmcXz2YbJ/QKYt+wLzvReOie987escVMqaEqR1GNFLAEmhl+WJdh++cnFihOwXeQbCA==
-  expiration: 3600000
+
+custom:
+  max:
+    session: 1
