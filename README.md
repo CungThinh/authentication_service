@@ -22,9 +22,8 @@ Authentication Services with Spring Boot for Backend and ReactJS for Frontend
 - Chuẩn hóa ApiResponse và handle lỗi bằng GlobalExceptionHandler
 - Unit Test và Integration Test
 - Kiểm thử sử dụng TestContainer cho môi trường cô lập.
-- Deploy SonarQube lên EC2
 - SonarQube để duy trì chất lượng mã nguồn.
-- CICD với Github Actions.
+- Deploy SonarQube lên EC2 để CICD với Github Actions.
 
 # JWT
 ### Khởi tạo token
@@ -174,7 +173,7 @@ private final RedisIndexedSessionRepository redisIndexedSessionRepository;
     }
 ```
 
-# CICD vói Github Actions
+# CICD với Github Actions
 ``` yaml
 name: CI/CD workflow for Maven Build and Sonar Code scan
 on:
