@@ -283,6 +283,16 @@ services:
 volumes:
   postgres_data:
 ```
-
-
-
+# Dependencies & Plugins
+- **spring-boot-starter-oauth2-resource-server**
+- **spring-boot-starter-data-jpa**
+- **com.nimbusds:nimbus-jose-jwt**
+- **spring-session-data-redis**
+- **spring-boot-starter-data-redis**
+- **io.jsonwebtoken**
+- **org.testcontainers:junit-jupiter**
+- **com.h2database:h2**
+- **com.fasterxml.jackson.datatype:jackson-datatype-jsr310**
+- **org.mapstruct:mapstruct**
+- **jacoco-maven-plugin**
+- **spotless-maven-plugin**
