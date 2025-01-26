@@ -54,25 +54,39 @@ public String generateToken(UserEntity user) {
         }
     }
 ```
-### Blacklist service
+### Xác thực token
 ```java
-public class JwtBlackListService {
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(secretKey.getBytes());
+        SignedJWT signedJWT = SignedJWT.parse(token);
 
-    private static final String BLACKLIST_PREFIX = "BLACKLIST_";
-
-    public void addTokenToBlackList(String token, Long tokenExpiration) {
-        long ttl = tokenExpiration - System.currentTimeMillis();
-        if (ttl > 0) {
-            redisTemplate.opsForValue().set(BLACKLIST_PREFIX + token, "blacklisted", ttl, TimeUnit.MILLISECONDS);
+        Date expirationTime;
+        if (isRefresh) {
+            expirationTime = new Date(signedJWT
+                    .getJWTClaimsSet()
+                    .getIssueTime()
+                    .toInstant()
+                    .plus(refreshable_duration, ChronoUnit.SECONDS)
+                    .toEpochMilli());
+        } else {
+            expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         }
-    }
 
-    public boolean isTokenBlacklisted(String token) {
-        return redisTemplate.hasKey(BLACKLIST_PREFIX + token);
+        if (!signedJWT.verify(verifier)) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        if (expirationTime.before(new Date())) {
+            //            log.info("Token hết hạn");
+            throw new CustomException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if (jwtBlackListService.isTokenBlacklisted(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        return signedJWT;
     }
-}
 ```
 
 ### Integration Test
@@ -90,19 +104,7 @@ public class UserControllerIntegrationTest {
 
         savedUser = userResipotory.saveAndFlush(testUser);
     }
-
-    @DynamicPropertySource
-    static void configureDataSource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
-    }
-
-    @Container
-    static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
-
+...
     @Test
     @WithMockUser(
             username = "test-uuid-123",
@@ -140,6 +142,29 @@ private final RedisIndexedSessionRepository redisIndexedSessionRepository;
         return new SpringSessionBackedSessionRegistry<>(this.redisIndexedSessionRepository);
     }
 
+```
+### Sử dụng Test Container
+```java
+@Container
+    static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("authservices")
+            .withUsername("postgres")
+            .withPassword("dontwastetime");
+
+    @Container
+    private static final RedisContainer redis =
+            new RedisContainer(DockerImageName.parse("redis:alpine")).withExposedPorts(6379);
+
+    @DynamicPropertySource
+    public static void properties(DynamicPropertyRegistry registry) {
+        // primary
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
+        registry.add("spring.redis.host", redis::getHost);
+        registry.add("spring.redis.port", () -> redis.getMappedPort(6379));
+    }
 ```
 
 ### Test session có bị invalidate không
