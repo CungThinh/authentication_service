@@ -21,7 +21,7 @@ Authentication Services with Spring Boot for Backend and ReactJS for Frontend
 - Lưu trữ session trong Redis.
 - Chuẩn hóa ApiResponse và handle lỗi bằng GlobalExceptionHandler
 - Unit Test và Integration Test
-- Kiểm thử sử dụng TestContainer cho môi trường cô lập.
+- Kiểm thử sử dụng TestContainer hoặc H2 Database cho môi trường cô lập.
 - SonarQube để duy trì chất lượng mã nguồn.
 - Deploy SonarQube lên EC2 để CICD với Github Actions.
 
